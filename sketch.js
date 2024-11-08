@@ -62,11 +62,13 @@ let roadMetrics = [
   [0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0]
 ];
 
+
 let redBlocks = [];
 let yellowBlocks = [];
 let blueBlocks = [];
 let grayBlocks = [];
 let canvas;
+let roads = [];
 
 function windowResized() {
   resizeCanvas(558, 558);
@@ -97,6 +99,12 @@ function setup() {
       }
     }
   }
+
+  // Create Road instances for specified rows
+  let roadRows = [8, 18, 22, 28, 31, 36, 42, 47];
+  for (let rowIndex of roadRows) {
+    roads.push(new Road(rowIndex, roadMetrics[rowIndex].length));
+  }
 }
 
 class Block {
@@ -106,6 +114,40 @@ class Block {
     this.y = y;
     this.width = width;
     this.height = height;
+  }
+}
+
+class Road {
+  constructor(row, cols) {
+    this.row = row;
+    this.cols = cols;
+    this.blueBlocks = [];
+    this.initializeBlueBlocks();
+  }
+
+  initializeBlueBlocks() {
+    // Randomly place blue blocks in the road
+    for (let i = 0; i < 5; i++) { // Initialize with 5 blue blocks
+      let col = floor(random(this.cols));
+      this.blueBlocks.push(col);
+    }
+  }
+
+  updateBlueBlocks() {
+    // Move blue blocks to simulate movement
+    for (let i = 0; i < this.blueBlocks.length; i++) {
+      this.blueBlocks[i] = (this.blueBlocks[i] + 1) % this.cols; // Move right and wrap around
+    }
+  }
+
+  draw() {
+    for (let col of this.blueBlocks) {
+      let x = 558 / this.cols * col;
+      let y = 558 / 50 * this.row;
+      fill(57, 86, 151);
+      noStroke();
+      rect(x, y, 558 / this.cols, 558 / 50);
+    }
   }
 }
 
@@ -136,14 +178,19 @@ function draw() {
   background(242, 243, 238);
   drawAllBuildings();
   drawAllBlocks();
-  drawAxisCoordinates(); 
+  drawAxisCoordinates();
+
+  // Update and draw roads with moving blue blocks
+  for (let road of roads) {
+    road.updateBlueBlocks();
+    road.draw();
+  }
 }
 
 function drawAllBuildings() {
   drawBuildings(83, 33.90, 48, 18, color(225, 201, 41));
   drawBuildings(92, 21.90, 24, 68, color(175, 57, 43));
   drawBuildings(92, 52, 24, 13, color(217, 214, 209));
-  
 }
 
 function drawBuildings(x, y, width, height, color) {
@@ -162,12 +209,10 @@ function drawAxisCoordinates() {
   let cellWidth = width / numCols;
   let cellHeight = height / numRows;
 
-
   for (let j = 0; j < numCols; j++) {
     text(`${j}`, j * cellWidth + cellWidth / 2 - 6, 10);
   }
 
- 
   for (let i = 0; i < numRows; i++) {
     text(`${i}`, 2, i * cellHeight + cellHeight / 2 + 4);
   }
