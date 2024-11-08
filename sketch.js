@@ -217,10 +217,9 @@ function draw() {
   background(242, 243, 238);
   drawAllBuildings();
   drawAllBlocks();
-  drawAxisCoordinates();
 
   // Update and draw roads with moving blue blocks
-  let currentTime = millis();
+  let currentTime = millis();//Get current time
   if (currentTime - lastRoadChangeTime > 3000) {
     isCurrentRoadActive = !isCurrentRoadActive;
     if (isCurrentRoadActive) {
@@ -435,28 +434,4 @@ function drawBuildings(x, y, width, height, color) {
   rect(x, y, width, height);
   noStroke();
 }
-
-function drawAxisCoordinates() {
-  fill(0);
-  textSize(12);
-
-  let numRows = roadMetrics.length;
-  let numCols = roadMetrics[0].length;
-
-  let cellWidth = width / numCols;
-  let cellHeight = height / numRows;
-
-  for (let j = 0; j < numCols; j++) {
-    text(`${j}`, j * cellWidth + cellWidth / 2 - 6, 10);
-  }
-
-  for (let i = 0; i < numRows; i++) {
-    text(`${i}`, 2, i * cellHeight + cellHeight / 2 + 4);
-  }
-}
-
-
-
-
-
 
